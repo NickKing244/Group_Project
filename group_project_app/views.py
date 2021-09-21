@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-import bcrypt
+import bcrypt, os
 from .models import User
+from .api import *
+from dotenv import load_dotenv
+load_dotenv()
 
+GOOGLE_API_KEY = str(os.getenv('GOOGLE_API_KEY'))
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -52,3 +56,14 @@ def bizdetails(request):
         'user': User.objects.get(id=request.session['id'])
     }
     return render (request, 'details.html', context)
+
+def search(request):
+    client= GoogleMapsClient()
+    locations_list=[]
+    for location in client.search(location=request.POST['search_space'])['results']:
+        locations_list.append(client.detail(place_id=location['place_id'])['result'])
+    context={
+        'locations':locations_list,
+        'user':User.objects.get(id=request.session['id'])
+    }
+    return render(request, 'search.html', context)

@@ -51,13 +51,12 @@
               </li>
             </ul>
             <form class="d-flex search-bar" action="/search" method="post">
-              {% csrf_token%}
               <input
                 class="form-control me-2"
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
-                name="search_space"
+                id="search"
               />
               <button class="btn btn-outline-success" type="submit">
                 Search
@@ -74,22 +73,23 @@
       <h1 class="welcome-msg">Welcome {{user.first_name}}!</h1>
       <div id="favorites">
         <h2 id="main-page-title">
-          {{user.first_name}}'s Favorite Bars/Restaurants
+          A list of Bars and Restaurants Nearby
         </h2>
         <table class="table table-success table-striped">
           <thead>
             <tr>
               <th>Name of Business</th>
               <th>Location</th>
-              <th>Popularity</th>
+              <th>Rating(if applicable)</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
+            {% for location in locations%}
             <tr>
-              <td>The Craziest Bar Ever</td>
-              <td>123 Crazy St</td>
-              <td>Busy</td>
+              <td>{{location.name}}</td>
+              <td>{{location.formatted_address}}</td>
+              <td>{{location.rating}}</td>
               <td>
                 <div
                   class="btn-group"
@@ -108,7 +108,9 @@
                   >
                 </div>
               </td>
+              
             </tr>
+            {%endfor%}
           </tbody>
         </table>
       </div>
