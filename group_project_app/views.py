@@ -76,3 +76,41 @@ def search(request):
         'user':User.objects.get(id=request.session['id'])
     }
     return render(request, 'search.html', context)
+<<<<<<< HEAD
+=======
+
+def favorite(request, place_id):
+    this_user = User.objects.get(id=request.session['id'])
+    client = GoogleMapsClient()
+    location = client.detail(place_id=place_id)['result']
+    this_location = Business.objects.create( 
+        name=location['name'], 
+        rating=location['rating'], 
+        place_id=place_id, 
+        location=location['formatted_address'] )
+    this_location.favorited_by.add(this_user)
+    return redirect('/main')
+
+def account(request):
+    context = {
+        'user': User.objects.get(id=request.session['id'])
+    }
+    return render(request, 'edit.html', context)
+
+def update(request):
+    errors = User.objects.edit(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect('/account')
+    if request.method != 'POST' or 'id' not in request.session:
+        return redirect('/')
+    else:
+        this_user = User.objects.get(id=request.session['id'])
+        this_user.first_name = request.POST['first_name']
+        this_user.last_name = request.POST['last_name']
+        this_user.email = request.POST['email']
+        this_user.password = request.POST['password']
+        this_user.save()
+        return redirect('/account')
+>>>>>>> bbf3621e833ac7e602eaf8b50eefa17b1abb660b
